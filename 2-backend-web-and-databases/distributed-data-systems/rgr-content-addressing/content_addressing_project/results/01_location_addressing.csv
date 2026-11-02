@@ -1,0 +1,5 @@
+﻿IP сервера,Назва файлу,Шлях до файлу,"Розмір, байт"
+192.168.1.10,file1.txt,content_addressing_project\servers\192.168.1.10\file1.txt,859
+192.168.1.20,file2.txt,content_addressing_project\servers\192.168.1.20\file2.txt,845
+192.168.1.30,file1_copy.txt,content_addressing_project\servers\192.168.1.30\file1_copy.txt,859
+192.168.1.30,file3.txt,content_addressing_project\servers\192.168.1.30\file3.txt,705

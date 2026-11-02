@@ -1,0 +1,10 @@
+# personal save file
+life_rpg_save.json
+__pycache__/
+.venv/
+venv/
+*.db
+.idea/
+x64/
+Debug/
+cmake-build-*/

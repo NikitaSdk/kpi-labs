@@ -1,0 +1,5 @@
+﻿Назва файлу,Шлях до файлу,"Розмір, байт"
+file1.txt,content_addressing_demo\files\file1.txt,102
+file2.txt,content_addressing_demo\files\file2.txt,64
+file3_copy.txt,content_addressing_demo\files\file3_copy.txt,102
+file4.txt,content_addressing_demo\files\file4.txt,72

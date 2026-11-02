@@ -1,0 +1,235 @@
+# Code extracted from the lab report (report.pdf)
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+
+public class FusekiApiTimer {
+    private static final HttpClient CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(20))
+            .build();
+
+    public static void main(String[] args) {
+        String fusekiEndpoint = "http://localhost:3030/painters/query";
+        String dbpediaEndpoint = "https://dbpedia.org/sparql";
+
+        String localQuery = """
+                PREFIX dbo: <http://dbpedia.org/ontology/>
+                PREFIX dbp: <http://dbpedia.org/property/>
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+                SELECT ?painter ?name ?movement ?wikipedia ?wikidata
+                WHERE {
+                  ?painter a foaf:Person ;
+                           foaf:name ?name ;
+                           dbo:movement ?movement ;
+                           dbp:wikipedia ?wikipedia ;
+                           owl:sameAs ?wikidata .
+                }
+                ORDER BY ?name
+                """;
+
+        String dbpediaQuery = """
+                PREFIX dbr: <http://dbpedia.org/resource/>
+                PREFIX dbo: <http://dbpedia.org/ontology/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+                SELECT ?artist ?label ?birthDate ?deathDate
+                WHERE {
+                  VALUES ?artist {
+                    dbr:Camille_Pissarro
+                    dbr:Claude_Monet
+                    dbr:Edgar_Degas
+                    dbr:Paul_Cézanne
+                    dbr:Pierre-Auguste_Renoir
+                  }
+
+                  ?artist rdfs:label ?label .
+                  FILTER (lang(?label) = "en")
+
+                  OPTIONAL { ?artist dbo:birthDate ?birthDate . }
+                  OPTIONAL { ?artist dbo:deathDate ?deathDate . }
+                }
+                ORDER BY ?label
+                """;
+
+        String combinedQuery = """
+                PREFIX dbo: <http://dbpedia.org/ontology/>
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                PREFIX dbr: <http://dbpedia.org/resource/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+                SELECT ?localPainter ?name ?movement ?dbpediaArtist ?dbpediaLabel ?birthDate ?deathDate
+                WHERE {
+                  ?localPainter a foaf:Person ;
+                                foaf:name ?name ;
+                                dbo:movement ?movement .
+
+                  VALUES (?name ?dbpediaArtist) {
+                    ("Camille Pissarro" dbr:Camille_Pissarro)
+                    ("Claude Monet" dbr:Claude_Monet)
+                    ("Edgar Degas" dbr:Edgar_Degas)
+                    ("Paul Cézanne" dbr:Paul_Cézanne)
+                    ("Pierre-Auguste Renoir" dbr:Pierre-Auguste_Renoir)
+                  }
+
+                  SERVICE <https://dbpedia.org/sparql> {
+                    ?dbpediaArtist rdfs:label ?dbpediaLabel .
+                    FILTER (lang(?dbpediaLabel) = "en")
+
+                    OPTIONAL { ?dbpediaArtist dbo:birthDate ?birthDate . }
+                    OPTIONAL { ?dbpediaArtist dbo:deathDate ?deathDate . }
+                  }
+                }
+                ORDER BY ?name
+                """;
+
+        QueryResult localResult = runAndPrint(
+                "Запит 1. Локальний triplestore Fuseki",
+                fusekiEndpoint,
+                localQuery
+        );
+
+        pause(2);
+
+        QueryResult dbpediaResult = runAndPrint(
+                "Запит 2. Internet-endpoint DBpedia",
+                dbpediaEndpoint,
+                dbpediaQuery
+        );
+
+        pause(2);
+
+        QueryResult combinedResult = runAndPrint(
+                "Запит 3. Локальні дані Fuseki + DBpedia через SERVICE",
+                fusekiEndpoint,
+                combinedQuery
+        );
+
+        System.out.println();
+        System.out.println("============================================================");
+        System.out.println("ПІДСУМКОВА ТАБЛИЦЯ ЧАСУ");
+        System.out.println("============================================================");
+        System.out.printf("%-55s %12.3f ms%n", "1. Локальний Fuseki", localResult.elapsedMs);
+        System.out.printf("%-55s %12.3f ms%n", "2. Internet-endpoint DBpedia", dbpediaResult.elapsedMs);
+        System.out.printf("%-55s %12.3f ms%n", "3. Fuseki + DBpedia через SERVICE", combinedResult.elapsedMs);
+    }
+
+    private static QueryResult runAndPrint(String title, String endpoint, String query) {
+        System.out.println();
+        System.out.println("============================================================");
+        System.out.println(title);
+        System.out.println("Endpoint: " + endpoint);
+        System.out.println("============================================================");
+
+        QueryResult result = runQuery(endpoint, query);
+
+        System.out.printf("HTTP status: %d%n", result.statusCode);
+        System.out.printf("Кількість рядків: %d%n", result.rows);
+        System.out.printf("Час виконання: %.3f ms%n", result.elapsedMs);
+
+        printPreview(result.body, 6);
+
+        return result;
+    }
+
+    private static QueryResult runQuery(String endpoint, String query) {
+        long start = System.nanoTime();
+
+        try {
+            String form = "query=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .timeout(Duration.ofSeconds(60))
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                    .header("Accept", "text/csv")
+                    .header("User-Agent", "laba5-fuseki-timer/1.0")
+                    .POST(HttpRequest.BodyPublishers.ofString(form))
+                    .build();
+
+            HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+            long end = System.nanoTime();
+            double elapsedMs = (end - start) / 1_000_000.0;
+            int rows = countCsvRows(response.body());
+
+            return new QueryResult(response.statusCode(), response.body(), rows, elapsedMs);
+
+        } catch (IOException | InterruptedException e) {
+            long end = System.nanoTime();
+            double elapsedMs = (end - start) / 1_000_000.0;
+
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+
+            return new QueryResult(0, "Помилка: " + e.getMessage(), 0, elapsedMs);
+        }
+    }
+
+    private static int countCsvRows(String csv) {
+        if (csv == null || csv.isBlank()) {
+            return 0;
+        }
+
+        String[] lines = csv.split("\\R");
+        int nonEmpty = 0;
+
+        for (String line : lines) {
+            if (!line.isBlank()) {
+                nonEmpty++;
+            }
+        }
+
+        return Math.max(0, nonEmpty - 1);
+    }
+
+    private static void printPreview(String text, int maxLines) {
+        System.out.println();
+        System.out.println("Перші рядки відповіді:");
+
+        if (text == null || text.isBlank()) {
+            System.out.println("(порожня відповідь)");
+            return;
+        }
+
+        String[] lines = text.split("\\R");
+
+        for (int i = 0; i < Math.min(lines.length, maxLines); i++) {
+            System.out.println(lines[i]);
+        }
+
+        if (lines.length > maxLines) {
+            System.out.println("...");
+        }
+    }
+
+    private static void pause(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private static class QueryResult {
+        int statusCode;
+        String body;
+        int rows;
+        double elapsedMs;
+
+        QueryResult(int statusCode, String body, int rows, double elapsedMs) {
+            this.statusCode = statusCode;
+            this.body = body;
+            this.rows = rows;
+            this.elapsedMs = elapsedMs;
+        }
+    }
+}

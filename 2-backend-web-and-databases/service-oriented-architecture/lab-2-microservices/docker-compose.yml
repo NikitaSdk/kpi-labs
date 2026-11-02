@@ -1,0 +1,109 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8000"
+    depends_on:
+      - consul
+      - access-service
+      - activity-service
+      - training-service
+      - stats-service
+      - reporting-service
+    networks:
+      - ms-net
+
+  access-service:
+    build:
+      context: .
+      dockerfile: ./access-service/Dockerfile
+    container_name: access-service
+    depends_on:
+      - consul
+    networks:
+      - ms-net
+
+  activity-service:
+    build:
+      context: .
+      dockerfile: ./activity-service/Dockerfile
+    container_name: activity-service
+    depends_on:
+      - consul
+    networks:
+      - ms-net
+
+
+  activity-service-2:
+    build:
+      context: .
+      dockerfile: ./activity-service/Dockerfile
+    container_name: activity-service-2
+    depends_on:
+      - consul
+    networks:
+      - ms-net
+
+
+  training-service:
+    build:
+      context: .
+      dockerfile: ./training-service/Dockerfile
+    container_name: training-service
+    depends_on:
+      - consul
+      - stats-service
+      - rabbitmq
+    networks:
+      - ms-net
+
+  stats-service:
+    build:
+      context: .
+      dockerfile: ./stats-service/Dockerfile
+    container_name: stats-service
+    depends_on:
+      - consul
+      - rabbitmq
+    networks:
+      - ms-net
+
+  reporting-service:
+    build:
+      context: .
+      dockerfile: ./reporting-service/Dockerfile
+    container_name: reporting-service
+    depends_on:
+      - consul
+      - stats-service
+    networks:
+      - ms-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - ms-net
+
+  consul:
+    image: consul:1.15
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: ["agent", "-dev", "-client=0.0.0.0"]
+    networks:
+      - ms-net
+
+networks:
+  ms-net:
+    driver: bridge
+

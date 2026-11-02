@@ -1,0 +1,5 @@
+﻿Назва файлу,SHA 256 хеш,Статус,"Розмір, байт"
+file1.txt,41d7b0cc71736b79b0517c04f4a74fa79afd0f221e6ac2e1ef3fc3ff974fbf1d,Новий вміст,102
+file2.txt,d272f233d8db0e05219e9c420ef9e745c1871addd40bdca46a4912fddd37349c,Новий вміст,64
+file3_copy.txt,41d7b0cc71736b79b0517c04f4a74fa79afd0f221e6ac2e1ef3fc3ff974fbf1d,Дублікат вмісту,102
+file4.txt,68e617913b4d5a6bb22698b1ca0220419e87eab1ebe32c98f5c08a3e901aef92,Новий вміст,72

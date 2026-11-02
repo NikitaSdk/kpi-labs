@@ -1,0 +1,96 @@
+/* Reset some default browser styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Set some base styles for body */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Style the header */
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+}
+
+header nav ul {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  padding: 30px 0;
+}
+
+header nav ul li a {
+  color: #fff;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+/* Style the main content */
+main {
+  padding: 20px;
+}
+
+/* Style the section headings */
+h2 {
+  margin-bottom: 10px;
+}
+
+/* Style the section descriptions */
+p {
+  margin-bottom: 20px;
+}
+
+/* Style the book cards */
+.card {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 300px;
+}
+
+.card h3 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.card p {
+  margin-bottom: 15px;
+}
+
+.books {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 100px;
+}
+/* Style the footer */
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+}
+
+address {
+  font-style: normal;
+}
+
+section {
+  width: 80%;
+  margin: 50px auto;
+}
+
+section h2 {
+  font-size: 36px;
+}
+
+section p {
+  font-size: 20px;
+}

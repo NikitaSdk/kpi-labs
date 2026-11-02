@@ -1,0 +1,109 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "Zapovit",
+      "description": "A poem by Taras Shevchenko",
+      "type": "Poetry",
+      "author": "Taras Shevchenko"
+    },
+    {
+      "id": 2,
+      "title": "The Waste Land",
+      "description": "A poem by T.S. Eliot",
+      "type": "Poetry",
+      "author": "T.S. Eliot"
+    },
+    {
+      "id": 3,
+      "title": "Leaves of Grass",
+      "description": "A poetry collection by Walt Whitman",
+      "type": "Poetry",
+      "author": "Walt Whitman"
+    },
+    {
+      "id": 4,
+      "title": "To Kill a Mockingbird",
+      "description": "A novel by Harper Lee",
+      "type": "Fiction",
+      "author": "Harper Lee"
+    },
+    {
+      "id": 5,
+      "title": "The Great Gatsby",
+      "description": "A novel by F. Scott Fitzgerald",
+      "type": "Fiction",
+      "author": "F. Scott Fitzgerald"
+    },
+    {
+      "id": 6,
+      "title": "Crime and Punishment",
+      "description": "A novel by Fyodor Dostoevsky",
+      "type": "Fiction",
+      "author": "Fyodor Dostoevsky"
+    },
+    {
+      "id": 7,
+      "title": "1984",
+      "description": "A dystopian novel by George Orwell",
+      "type": "Science Fiction",
+      "author": "George Orwell"
+    },
+    {
+      "id": 8,
+      "title": "Brave New World",
+      "description": "A dystopian novel by Aldous Huxley",
+      "type": "Science Fiction",
+      "author": "Aldous Huxley"
+    },
+    {
+      "id": 9,
+      "title": "Dune",
+      "description": "A science fiction novel by Frank Herbert",
+      "type": "Science Fiction",
+      "author": "Frank Herbert"
+    },
+    {
+      "id": 10,
+      "title": "The Hobbit",
+      "description": "A fantasy novel by J.R.R. Tolkien",
+      "type": "Fantasy",
+      "author": "J.R.R. Tolkien"
+    },
+    {
+      "id": 11,
+      "title": "Harry Potter and the Sorcerer's Stone",
+      "description": "The first novel in the Harry Potter series by J.K. Rowling",
+      "type": "Fantasy",
+      "author": "J.K. Rowling"
+    },
+    {
+      "id": 12,
+      "title": "The Name of the Wind",
+      "description": "A fantasy novel by Patrick Rothfuss",
+      "type": "Fantasy",
+      "author": "Patrick Rothfuss"
+    },
+    {
+      "id": 13,
+      "title": "Pride and Prejudice",
+      "description": "A novel by Jane Austen",
+      "type": "Romance",
+      "author": "Jane Austen"
+    },
+    {
+      "id": 14,
+      "title": "Jane Eyre",
+      "description": "A novel by Charlotte Brontë",
+      "type": "Romance",
+      "author": "Charlotte Brontë"
+    },
+    {
+      "id": 15,
+      "title": "Romeo and Juliet",
+      "description": "A tragedy by William Shakespeare",
+      "type": "Romance",
+      "author": "William Shakespeare"
+    }
+  ]
+}

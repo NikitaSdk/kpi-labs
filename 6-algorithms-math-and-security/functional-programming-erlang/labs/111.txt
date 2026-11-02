@@ -1,0 +1,124 @@
+#include "stm32f1xx.h"
+
+volatile uint32_t msTicks     = 0;
+volatile uint32_t last_press  = 0;
+volatile uint32_t prev_press  = 0;
+volatile uint32_t isr_counter = 0;
+
+volatile char    uart_buf[64];
+volatile uint8_t uart_idx = 0;
+volatile uint8_t uart_len = 0;
+
+static void UART_Send(const char *str)
+{
+    if (USART1->CR1 & USART_CR1_TXEIE) return;
+    uint8_t len = 0;
+    while (str[len] && len < 63) { uart_buf[len] = str[len]; len++; }
+    uart_len = len;
+    uart_idx = 0;
+    USART1->CR1 |= USART_CR1_TXEIE;
+}
+
+void TIM2_IRQHandler(void)
+{
+    if (TIM2->SR & TIM_SR_UIF)
+    {
+        TIM2->SR &= ~TIM_SR_UIF;
+        msTicks++;
+    }
+}
+
+void EXTI1_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR1)
+    {
+        EXTI->PR |= EXTI_PR_PR1;
+
+        uint32_t now = msTicks;
+
+        if (last_press != 0 && (now - last_press) < 50) return;
+
+        isr_counter++;
+
+        if ((now - prev_press) < 400)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GPIOB->ODR |=  GPIO_ODR_ODR1;
+                uint32_t t = msTicks;
+                while ((msTicks - t) < 100);
+
+                GPIOB->ODR &= ~GPIO_ODR_ODR1;
+                t = msTicks;
+                while ((msTicks - t) < 100);
+            }
+            prev_press = 0;
+        }
+        else
+        {
+            GPIOB->ODR ^= GPIO_ODR_ODR1;
+            prev_press  = now;
+        }
+
+        last_press = now;
+        UART_Send("BTN\r\n");
+    }
+}
+
+void USART1_IRQHandler(void)
+{
+    if (USART1->SR & USART_SR_TXE)
+    {
+        if (uart_idx < uart_len)
+            USART1->DR = (uint8_t)uart_buf[uart_idx++];
+        else
+            USART1->CR1 &= ~USART_CR1_TXEIE;
+    }
+}
+
+static void UART_Init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+
+    GPIOA->CRH &= ~(GPIO_CRH_MODE9  | GPIO_CRH_CNF9);
+    GPIOA->CRH |=  (GPIO_CRH_MODE9_1 | GPIO_CRH_CNF9_1);
+
+    GPIOA->CRH &= ~(GPIO_CRH_MODE10 | GPIO_CRH_CNF10);
+    GPIOA->CRH |=   GPIO_CRH_CNF10_0;
+
+    USART1->BRR = 833;
+    USART1->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+    NVIC_EnableIRQ(USART1_IRQn);
+}
+
+int main(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN;
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+
+    GPIOB->CRL &= ~(GPIO_CRL_MODE1 | GPIO_CRL_CNF1);
+    GPIOB->CRL |=   GPIO_CRL_MODE1_0;
+
+    GPIOA->CRL &= ~(GPIO_CRL_MODE1 | GPIO_CRL_CNF1);
+    GPIOA->CRL |=   GPIO_CRL_CNF1_1;
+    GPIOA->ODR |=   GPIO_ODR_ODR1;
+
+    AFIO->EXTICR[0] &= ~AFIO_EXTICR1_EXTI1;
+    EXTI->IMR  |=  EXTI_IMR_MR1;
+    EXTI->FTSR |=  EXTI_FTSR_TR1;
+    EXTI->RTSR &= ~EXTI_RTSR_TR1;
+    NVIC_SetPriority(EXTI1_IRQn, 1);
+    NVIC_EnableIRQ(EXTI1_IRQn);
+
+    TIM2->PSC  = 7;
+    TIM2->ARR  = 999;
+    TIM2->DIER |= TIM_DIER_UIE;
+    TIM2->CR1  |= TIM_CR1_CEN;
+    NVIC_SetPriority(TIM2_IRQn, 0);
+    NVIC_EnableIRQ(TIM2_IRQn);
+
+    UART_Init();
+    UART_Send("System ready\r\n");
+
+    while (1) {}
+}

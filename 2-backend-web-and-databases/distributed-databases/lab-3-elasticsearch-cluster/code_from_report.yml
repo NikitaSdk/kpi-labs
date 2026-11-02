@@ -1,0 +1,329 @@
+# Code extracted from the lab report (report.pdf)
+
+# ---- fragment 1 ----
+version: '2.4'
+
+services :
+    es0 :
+    image : docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+    container_name : es0
+    environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = es0
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2"
+- "discovery.zen.minimum_master_nodes=2"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+ulimits:
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvol0 : / usr / share / elasticsearch / data
+ports :
+-"9200:9200"
+networks :
+    -esnet
+
+    es1 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : es1
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = es1
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2"
+- "discovery.zen.minimum_master_nodes=2"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvol1 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+es2 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : es2
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = es2
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2"
+- "discovery.zen.minimum_master_nodes=2"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvol2 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+kibana :
+image: docker.elastic.co / kibana / kibana : 6.8.6
+container_name : kibana
+environment :
+-ELASTICSEARCH_URL = http ://es0:9200
+    ports :
+    -"5601:5601"
+    depends_on :
+    -es0
+    networks :
+-esnet
+
+networks :
+esnet: {}
+
+volumes:
+esvol0:
+driver: local
+esvol1 :
+driver: local
+esvol2 :
+driver: local
+
+# ---- fragment 2 ----
+services:
+es0:
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : es0
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = es0
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+ulimits:
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvol0 : / usr / share / elasticsearch / data
+ports :
+-"9200:9200"
+networks :
+    -esnet
+
+    es1 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : es1
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = es1
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvol1 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+es2 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : es2
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = es2
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvol2 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+m3 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : m3
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = m3
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "node.master=true"
+- "node.data=false"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvolm3 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+m4 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : m4
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = m4
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "node.master=true"
+- "node.data=false"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvolm4 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+d5 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : d5
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = d5
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "node.master=false"
+- "node.data=true"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvold5 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+d6 :
+image: docker.elastic.co / elasticsearch / elasticsearch : 6.8.6
+container_name : d6
+environment :
+-ES_SKIP_SET_KERNEL_PARAMETERS = true
+- cluster.name = docker - cluster
+- node.name = d6
+- bootstrap.memory_lock = true
+- "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+- "node.master=false"
+- "node.data=true"
+- "discovery.zen.ping.unicast.hosts=es0,es1,es2,m3,m4,d5,d6"
+- "discovery.zen.minimum_master_nodes=3"
+- "xpack.security.enabled=false"
+- "xpack.watcher.enabled=false"
+- "xpack.monitoring.enabled=false"
+depends_on:
+-es0
+ulimits :
+memlock:
+soft: -1
+hard : -1
+mem_limit : 1g
+volumes :
+-esvold6 : / usr / share / elasticsearch / data
+networks :
+-esnet
+
+kibana :
+image: docker.elastic.co / kibana / kibana : 6.8.6
+container_name : kibana
+environment :
+-ELASTICSEARCH_URL = http ://es0:9200
+    ports :
+    -"5601:5601"
+    depends_on :
+    -es0
+    networks :
+-esnet
+
+networks :
+esnet: {}
+
+volumes:
+esvol0:
+driver: local
+esvol1 :
+driver: local
+esvol2 :
+driver: local
+esvolm3 :
+driver: local
+esvolm4 :
+driver: local
+esvold5 :
+driver: local
+esvold6 :
+driver: local

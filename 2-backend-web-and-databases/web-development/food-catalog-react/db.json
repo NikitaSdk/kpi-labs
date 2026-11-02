@@ -1,0 +1,151 @@
+{
+  "food": [
+    {
+      "id": 1,
+      "name": "sushi",
+      "price": "100",
+      "weight": "300",
+      "type": "Seafood"
+    },
+    {
+      "id": 2,
+      "name": "fish",
+      "price": "100",
+      "weight": "300",
+      "type": "Seafood"
+    },
+    {
+      "id": 3,
+      "name": "Bun",
+      "price": "700",
+      "weight": "500",
+      "type": "Bakery"
+    },
+    {
+      "id": 4,
+      "name": "Cake",
+      "price": "600",
+      "weight": "500",
+      "type": "Bakery"
+    },
+    {
+      "id": 5,
+      "name": "Toast",
+      "price": "200",
+      "weight": "100",
+      "type": "Bakery"
+    },
+    {
+      "id": 6,
+      "name": "Burger",
+      "price": "300",
+      "weight": "400",
+      "type": "Fast food"
+    },
+    {
+      "id": 7,
+      "name": "Fries",
+      "price": "150",
+      "weight": "200",
+      "type": "Fast food"
+    },
+    {
+      "id": 8,
+      "name": "Pizza",
+      "price": "500",
+      "weight": "700",
+      "type": "Fast food"
+    },
+    {
+      "id": 9,
+      "name": "Carrot",
+      "price": "50",
+      "weight": "100",
+      "type": "Vegetables"
+    },
+    {
+      "id": 10,
+      "name": "Broccoli",
+      "price": "80",
+      "weight": "200",
+      "type": "Vegetables"
+    },
+    {
+      "id": 11,
+      "name": "Spinach",
+      "price": "70",
+      "weight": "150",
+      "type": "Vegetables"
+    },
+    {
+      "id": 12,
+      "name": "Apple",
+      "price": "60",
+      "weight": "150",
+      "type": "Fruit"
+    },
+    {
+      "id": 13,
+      "name": "Banana",
+      "price": "40",
+      "weight": "120",
+      "type": "Fruit"
+    },
+    {
+      "id": 14,
+      "name": "Orange",
+      "price": "80",
+      "weight": "200",
+      "type": "Fruit"
+    },
+    {
+      "id": 15,
+      "name": "Cola",
+      "price": "90",
+      "weight": "330",
+      "type": "Drinks"
+    },
+    {
+      "id": 16,
+      "name": "Juice",
+      "price": "70",
+      "weight": "250",
+      "type": "Drinks"
+    },
+    {
+      "id": 17,
+      "name": "Water",
+      "price": "30",
+      "weight": "500",
+      "type": "Drinks"
+    },
+    {
+      "id": 18,
+      "name": "Candy",
+      "price": "120",
+      "weight": "150",
+      "type": "Sweets"
+    },
+    {
+      "id": 19,
+      "name": "Chocolate",
+      "price": "150",
+      "weight": "200",
+      "type": "Sweets"
+    },
+    {
+      "id": 20,
+      "name": "Ice Cream",
+      "price": "80",
+      "weight": "250",
+      "type": "Sweets"
+    },
+    {
+      "id": 21,
+      "name": "Caviar",
+      "price": "1000",
+      "weight": "50",
+      "type": "Seafood"
+    }
+  ]
+}

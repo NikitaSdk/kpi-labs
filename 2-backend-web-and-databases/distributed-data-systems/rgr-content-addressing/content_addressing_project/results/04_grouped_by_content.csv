@@ -1,0 +1,4 @@
+﻿SHA 256 хеш вмісту,IP сервера,Назва файлу,Шлях до файлу,"Розмір, байт",Кількість копій
+37ddcd4ec054507ac0ae3e15d91b5b63c0afd3c2269539c5c26632cb18693a7b,192.168.1.30,file3.txt,content_addressing_project\servers\192.168.1.30\file3.txt,705,1
+46cf654a98113351c92ccd8dbccd299c8484cdc233f3672832f558fc48910728,192.168.1.20,file2.txt,content_addressing_project\servers\192.168.1.20\file2.txt,845,1
+534922c6db650fa3bcedd8aed3e9d7d6d706c7e546685c3191d59c365e0ad3de,"192.168.1.10, 192.168.1.30","file1.txt, file1_copy.txt","content_addressing_project\servers\192.168.1.10\file1.txt, content_addressing_project\servers\192.168.1.30\file1_copy.txt",859,2
